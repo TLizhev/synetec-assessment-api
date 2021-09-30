@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SynetecAssessmentApi.Domain;
 using SynetecAssessmentApi.Dtos;
 using SynetecAssessmentApi.Services;
 using System.Threading.Tasks;
@@ -21,9 +22,18 @@ namespace SynetecAssessmentApi.Controllers
         {
             var bonusPoolService = new BonusPoolService();
 
+            if (request.SelectedEmployeeId.Equals(0)||request.SelectedEmployeeId.CompareTo(12)==1)
+            {
+                return BadRequest("Employee does not exist");
+            }
+            else
+            {
             return Ok(await bonusPoolService.CalculateAsync(
                 request.TotalBonusPoolAmount,
                 request.SelectedEmployeeId));
+
+            }
+
         }
     }
 }
