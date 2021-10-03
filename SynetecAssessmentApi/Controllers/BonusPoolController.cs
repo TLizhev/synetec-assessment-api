@@ -2,6 +2,7 @@
 using SynetecAssessmentApi.Domain;
 using SynetecAssessmentApi.Dtos;
 using SynetecAssessmentApi.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SynetecAssessmentApi.Controllers
@@ -9,6 +10,13 @@ namespace SynetecAssessmentApi.Controllers
     [Route("api/[controller]")]
     public class BonusPoolController : Controller
     {
+        private readonly BonusPoolService service;
+
+        public BonusPoolController(BonusPoolService service)
+        {
+            this.service = service;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -21,19 +29,24 @@ namespace SynetecAssessmentApi.Controllers
         public async Task<IActionResult> CalculateBonus([FromBody] CalculateBonusDto request)
         {
             var bonusPoolService = new BonusPoolService();
-
-            if (request.SelectedEmployeeId.Equals(0)||request.SelectedEmployeeId.CompareTo(12)==1)
+            var employees = new List<int>();
+            foreach (var item in service.GetEmployeesAsync().Result)
             {
-                return BadRequest("Employee does not exist");
+                employees.Add(item.Id);
+
+            }
+            if (employees.Contains(request.SelectedEmployeeId))
+            {
+
+                return Ok(await bonusPoolService.CalculateAsync(
+                                       request.TotalBonusPoolAmount,
+                                       request.SelectedEmployeeId));
             }
             else
             {
-            return Ok(await bonusPoolService.CalculateAsync(
-                request.TotalBonusPoolAmount,
-                request.SelectedEmployeeId));
-
+                return BadRequest("Employee does not exist");
             }
-
         }
     }
 }
+

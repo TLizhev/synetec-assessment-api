@@ -34,6 +34,7 @@ namespace SynetecAssessmentApi.Services
                 result.Add(
                     new EmployeeDto
                     {
+                        Id = employee.Id,
                         Fullname = employee.Fullname,
                         JobTitle = employee.JobTitle,
                         Salary = employee.Salary,
